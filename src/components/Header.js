@@ -1,6 +1,10 @@
 import {Link} from 'react-router-dom';
+import logo from '../assets/logo.png';
 
-const style= {
+const styles= {
+    header:{
+        backgroundColor:'#423f43',
+    },
     containerStyle:{
         display: 'flex',
         height:100,
@@ -14,35 +18,29 @@ const style= {
     navBarContainer: {
         flex: 2,
         height: '100px',
+        textAlign:'right',
     },
     navBar: {
-        display:'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        display: 'flex',
     },
     nav:{
         width: 120,
-        alignItems:'center',
     },
     link:{
         textDecoration: 'none',
+        color: 'white',
     }
 }
 function Header(){
     return (
-        <div>
-            <div style={style.containerStyle}>
-                <div style={style.headerContainer}>
-                    <div style={style.info}>
-                        <b>I'm HyunMin Ahn</b><br />
-                        A BE Developer
-                    </div>
+        <div style={styles.header}>
+            <div style={styles.containerStyle}>
+                <div style={styles.headerContainer}>
+                    <img src={logo} alt="Intro-hymin"/>
                 </div>
-                <div style={style.navBarContainer}>
-                    <div style={style.navBar}>
-                        <div style={style.nav}><p><Link style={style.link} to="/">Home</Link></p></div>
-                        <div style={style.nav}><p><Link style={style.link} to="/CV">CV</Link></p></div>
-                        <div style={style.nav}><p><Link style={style.link} to="/Blog">Blog</Link></p></div>
+                <div style={styles.navBarContainer}>
+                    <div style={styles.navBar}>
+                        <div style={styles.nav}><p><Link style={styles.link} to="/">Home</Link></p></div>
                     </div>
                 </div>
             </div>
