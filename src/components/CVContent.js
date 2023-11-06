@@ -57,5 +57,5 @@ function CVContent(props){
         </div>
     )
 }
-
+// TODO: add repository/blog area
 export default CVContent;
