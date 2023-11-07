@@ -26,16 +26,34 @@ const styles = {
 function CVSidebar(props){
 
     const [userInfo, setUserInfo] = useState([]);
-    const getUserInfo = async() =>{
-        axios.get("http://localhost:8080/api/getUserInfo").then((res)=>{
-            console.log(res.data)
-            setUserInfo([res.data[0]["email"],res.data[0]["phone"],res.data[0]["blog"],res.data[0]["git"]])
-        })
-    }
+    const [userSkill, setUserSkill] = useState([]);
+    const [userInterests, setUserInterests] = useState([]);
 
-    useEffect(()=>{
-        getUserInfo();
-    },[]);
+    const baseURL ="http://localhost:8080/api/user"
+
+    useEffect(() => {
+        axios.get(baseURL+"/info").then((res) => {
+            setUserInfo([res.data[0]["email"],res.data[0]["phone"],res.data[0]["blog"],res.data[0]["git"]]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/skill").then((res) => {
+            setUserSkill([res.data[0]["name"],res.data[0]["degree"]]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/interests").then((res) => {
+            setUserInterests([res.data[0]["name"]]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
 
     return(
         <div style={styles.sidebarContainer}>
@@ -59,13 +77,13 @@ function CVSidebar(props){
             <div>
                 <h3 style={styles.cvTitle}>● Skills</h3>
                 <div>
-                    여기는 skills가 들어가는 부분입니다.
+                    {userSkill[0]}
                 </div>
             </div>
             <div>
                 <h3 style={styles.cvTitle}>● Interests</h3>
                 <div>
-                    여기는 Interests부분이 들어가는 부분입니다.
+                    {userInterests[0]}
                 </div>
             </div>
         </div>

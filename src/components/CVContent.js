@@ -1,3 +1,6 @@
+import axios from "axios";
+import React from "react";
+import {useState, useEffect} from "react";
 import name from "../assets/name.png";
 
 const styles={
@@ -11,19 +14,71 @@ const styles={
         width: 100,
     },
 }
+
 function CVContent(props){
+
+    const [userInfo, setUserInfo] = useState([]);
+    const [userExp, setUserExp] = useState([]);
+    const [userEducation, setUserEducation] = useState([]);
+    const [userCertificate, setUserCertificate] = useState([]);
+    const [userProject, setUserProject] = useState([]);
+
+    const baseURL ="http://localhost:8080/api/user"
+
+    useEffect(() => {
+        axios.get(baseURL+"/info").then((res) => {
+            setUserInfo([res.data[0]["intro"]]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/experience").then((res) => {
+            setUserExp([res.data[0]['name']]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/education").then((res) => {
+            setUserEducation([res.data[0]['major']]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/certificate").then((res) => {
+            setUserCertificate([res.data[0]['name']]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(baseURL+"/project").then((res) => {
+            setUserProject([res.data[0]['name']]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+    },[])
+
+    // TODO: refactor duplicated things & insert other data & ui
+
     return (
         <div>
             <img src={name} alt="Hyunmin Ahn<br>BE Developer"/>
             <div>
-                여기는 간단한 자기소개 부분입니다.
+                {userInfo[0]}
             </div>
             <div>
                 <h3 style={styles.cvTitle}>● Experience</h3>
                 <div style={styles.cvContainer}>
                     <div style={styles.termContainer}>기간</div>
                     <div>
-                        여기는 Experience 부분입니다.
+                        {userExp[0]}
                     </div>
                 </div>
             </div>
@@ -32,7 +87,7 @@ function CVContent(props){
                 <div style={styles.cvContainer}>
                     <div style={styles.termContainer}>기간</div>
                     <div>
-                        여기는 Education 부분입니다.
+                        {userEducation[0]}
                     </div>
                 </div>
             </div>
@@ -41,7 +96,7 @@ function CVContent(props){
                 <div style={styles.cvContainer}>
                     <div style={styles.termContainer}>기간</div>
                     <div>
-                        여기는 Certificate 부분입니다.
+                        {userCertificate[0]}
                     </div>
                 </div>
             </div>
@@ -50,12 +105,12 @@ function CVContent(props){
                 <div style={styles.cvContainer}>
                     <div style={styles.termContainer}>기간</div>
                     <div>
-                        여기는 Project 부분입니다.
+                        {userProject[0]}
                     </div>
                 </div>
             </div>
         </div>
     )
 }
-// TODO: add repository/blog area
+
 export default CVContent;
