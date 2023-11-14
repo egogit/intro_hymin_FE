@@ -1,5 +1,7 @@
 import {Link} from 'react-router-dom';
 import logo from '../assets/logo.png';
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 const styles= {
     header:{
@@ -32,6 +34,21 @@ const styles= {
     }
 }
 function Header(){
+
+    const [isLogin, setIsLogin] = useState(false);
+    const baseURL ="http://localhost:8080/api/auth";
+
+    useEffect(() => {
+        axios.get(baseURL+'/checkSession').then((res) => {
+            let result = (res.data.status === 'success');
+            console.log(result)
+            setIsLogin(result);
+        }).catch((err) => {
+            console.log(err);
+            alert("오류가 발생하였습니다.")
+        })
+    },[])
+
     return (
         <div style={styles.header}>
             <div style={styles.containerStyle}>
@@ -41,6 +58,10 @@ function Header(){
                 <div style={styles.navBarContainer}>
                     <div style={styles.navBar}>
                         <div style={styles.nav}><p><Link style={styles.link} to="/">Home</Link></p></div>
+                        {
+                            isLogin ? <div style={styles.nav}><p><Link style={styles.link} to="/login">Login</Link></p></div>
+                                : <div style={styles.nav}><p><a style={styles.link} >LogOut</a></p></div>
+                        }
                     </div>
                 </div>
             </div>

@@ -98,8 +98,8 @@ function CVSidebar(props){
                 <div>
                     {
                         userSkill.map((skill) => {
-                            return <div style={styles.skillContainer}>
-                                <div key={skill[0]}>{skill[1]}</div>
+                            return <div key={skill[0]} style={styles.skillContainer}>
+                                <div>{skill[1]}</div>
                                 <div style={styles.skillRating}>
                                     <StarRatings rating={skill[2]} starRatedColor="#003b6c"
                                                  starSpacing='3px' starDimension="15px"/>
