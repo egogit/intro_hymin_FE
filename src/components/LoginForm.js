@@ -41,11 +41,10 @@ function LoginForm(props){
             id: id,
             pw: pw
         }).then((res) => {
-            if(res.data.status === 'success'){
-                alert(res.data.msg)
+            console.log(res)
+            if(res.data.msg === 'success'){
                 navigate('/');
             }else{
-                alert(res.data.msg)
                 setId('');
                 setPw('');
             }

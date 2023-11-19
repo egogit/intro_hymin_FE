@@ -40,14 +40,30 @@ function Header(){
 
     useEffect(() => {
         axios.get(baseURL+'/checkSession').then((res) => {
-            let result = (res.data.status === 'success');
+            console.log(res.data);
+            let result = res.data.status === 'success';
             console.log(result)
             setIsLogin(result);
         }).catch((err) => {
             console.log(err);
             alert("오류가 발생하였습니다.")
         })
-    },[])
+    })
+
+    const logoutHandler = () => {
+        setIsLogin(false);
+        axios.get(baseURL+'/logout').then((res) => {
+            let result = res.data.status === 'success';
+            if(!result){
+                alert("로그아웃에 실패하였습니다.");
+            }else{
+                alert("로그아웃하였습니다.");
+            }
+        }).catch((err) => {
+            console.log(err);
+            alert("오류가 발생하였습니다.")
+        })
+    }
 
     return (
         <div style={styles.header}>
@@ -59,8 +75,9 @@ function Header(){
                     <div style={styles.navBar}>
                         <div style={styles.nav}><p><Link style={styles.link} to="/">Home</Link></p></div>
                         {
-                            isLogin ? <div style={styles.nav}><p><Link style={styles.link} to="/login">Login</Link></p></div>
-                                : <div style={styles.nav}><p><a style={styles.link} >LogOut</a></p></div>
+                            isLogin ? <div style={styles.nav}><p><Link style={styles.link} to="/" onClick={logoutHandler} >LogOut</Link></p></div>
+                                : <div style={styles.nav}><p><Link style={styles.link} to="/login">Login</Link></p></div>
+
                         }
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
+
 const styles = {
     mainContainer:{
         textAlign: 'center',
@@ -23,17 +24,19 @@ function Login(){
     const navigate = useNavigate();
 
     useEffect(() => {
+        let result = false;
         axios.get(baseURL+'/checkSession').then((res) => {
-            let result = (res.data.status === 'success');
-            setIsLogin(result);
+            console.log(res);
+            result = (res.data.status === 'success');
         }).catch((err) => {
             console.log(err);
             alert("오류가 발생하였습니다.")
+        }).finally(() => {
+            setIsLogin(result);
         })
-    },[])
+    })
 
-    // if(!isLogin) { // TODO 로그인 여부 확인해서 로그인이 된 상태면 root로 돌아가게 만들기
-    // TODO 로그인이 되었다면 header에는 로그아웃 안되었다면 로그인을 띄우기
+    if(!isLogin) {
         return (
             <div>
                 <Header/>
@@ -42,9 +45,9 @@ function Login(){
                 </div>
             </div>
         )
-    // }else{
-    //     navigate('/')
-    // }
+    }else{
+         navigate('/')
+    }
 }
 
 export default Login;

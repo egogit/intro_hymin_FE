@@ -4,6 +4,9 @@ import {useState, useEffect} from "react";
 import name from "../assets/name.png";
 
 const styles={
+    cvContentContainer:{
+        width: "800px",
+    },
     cvContainer:{
         display:'flex',
         paddingBottom: '20px',
@@ -108,10 +111,14 @@ function CVContent(props){
         })
     },[])
 
+    useEffect(() => {
+
+    })
+
     // TODO: refactor duplicated things & insert other data & ui
 
     return (
-        <div>
+        <div style={styles.cvContentContainer}>
             <img src={name} alt="Hyunmin Ahn<br>BE Developer"/>
             <div>
                 {userInfo[0]}
