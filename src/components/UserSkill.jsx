@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import axios from "axios";
 import SidebarTitle from "../ui/SidebarTitle";
 import StarRatings from "react-star-ratings/build/star-ratings";
+import PlusButton from "./PlusButton";
+import InputContainer from "../ui/InputContainer";
 
 
 const styles = {
@@ -20,6 +22,8 @@ function UserSkill(props){
     const [editId, setEditId] = useState("");
     const [editSkill, setEditSkill] = useState("");
     const [editDegree, setEditDegree] = useState(0);
+    const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -32,7 +36,7 @@ function UserSkill(props){
         }).catch((err) =>{
             console.log(err);
         })
-    },[editId])
+    },[editId, isAddFormVisible])
 
     const onDoubleClick = (id, skill, degree) => {
         setEditId(id);
@@ -41,7 +45,7 @@ function UserSkill(props){
     }
 
     const updateUserSkill = () => {
-        axios.post(baseURL + "/skill/update", {
+        axios.post(baseURL + "/skill", {
             id: editId,
             name: editSkill,
             degree: editDegree
@@ -54,6 +58,30 @@ function UserSkill(props){
             console.log(err);
         })
     }
+
+    const toggleAddForm = (e) => {
+        e.preventDefault();
+        setIsAddFormVisible((prevState) => !prevState);
+    };
+
+    const addUserSkill = (e) => {
+        e.preventDefault();
+        if (editSkill==null || editDegree==null){
+            alert("입력내용은 반드시 입력해주세요.");
+            return false;
+        }
+        axios.post(baseURL+"/skill",{
+            name: editSkill,
+            degree: editDegree
+
+        }).then((res) => {
+            console.log(res);
+
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setIsAddFormVisible(false);
+    };
 
     return(
         <div>
@@ -87,7 +115,27 @@ function UserSkill(props){
                         )}
                     </div>
                 ))}
+                {
+                    isAddFormVisible && (
+                        <form>
+                            Name:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setEditSkill(e.target.value)
+                                }}
+                            /><br/>
+                            Rating:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setEditDegree(e.target.value)
+                                }}
+                            /><br/>
+                            <button type="submit" onClick={addUserSkill}>Add</button>
+                        </form>
+                    )
+                }
             </div>
+            <PlusButton onClick={toggleAddForm}/>
         </div>
     )
 }

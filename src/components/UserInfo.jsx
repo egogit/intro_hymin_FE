@@ -24,7 +24,7 @@ function UserInfo(props){
     }
 
     const updateUserInfo = () => {
-        axios.post(baseURL+"/info/update",{
+        axios.post(baseURL+"/info",{
             id: 1,
             intro: userIntro
         }).then((res) => {

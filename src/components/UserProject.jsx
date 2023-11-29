@@ -3,6 +3,7 @@ import React from "react";
 import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
+import PlusButton from "./PlusButton";
 
 const styles={
     cvContainer:{
@@ -16,16 +17,15 @@ const styles={
 function UserProject(props) {
 
     const [userProject, setUserProject] = useState([]);
-
-
-    const [showProjectUpdate, setShowProjectUpdate] = useState(false);
-    const [selectedProject, setSelectedProject] = useState(null);
-
     const [id, setId] = useState("");
     const [name, setName] = useState("");
     const [stack, setStack] = useState("");
     const [content, setContent] = useState("");
     const [contribution, setContribution] = useState("");
+    const [showProjectUpdate, setShowProjectUpdate] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(null);
+    const [isFormVisible, setIsFormVisible]=useState(false);
+    const [isAddFormVisible, setIsAddFormVisible]=useState(false);
 
 
     const baseURL = "http://localhost:8080/api/user"
@@ -42,9 +42,10 @@ function UserProject(props) {
         }).catch((err) =>{
             console.log(err);
         })
-    },[showProjectUpdate])
+    },[showProjectUpdate,selectedProject,isAddFormVisible])
 
     const toggleProjectUpdateForm = (project, e) => {
+        e.preventDefault();
         setShowProjectUpdate(prevState => !prevState);
         setId(project[0]);
         setName(project[1]);
@@ -52,10 +53,13 @@ function UserProject(props) {
         setContent(project[3]);
         setContribution(project[4]);
         setSelectedProject(project[0]);
+        setIsFormVisible(true);
+        setIsAddFormVisible(false);
     }
 
-    const updateUserProject = () => {
-        axios.post(baseURL + "/project/update", {
+    const updateUserProject = (e) => {
+        e.preventDefault();
+        axios.post(baseURL + "/project", {
             id: id,
             name: name,
             stack: stack,
@@ -63,13 +67,42 @@ function UserProject(props) {
             contribution: contribution
 
         }).then((res) => {
-            console.log(res)
+            console.log(res);
 
             setSelectedProject(null);
         }).catch((err) => {
             console.log(err);
         })
+        setIsFormVisible(false);
     }
+
+    const toggleAddForm = (e) => {
+        e.preventDefault();
+        setIsAddFormVisible((prevState) => !prevState);
+        setIsFormVisible(false);
+    };
+
+    const addUserProject = (e) => {
+        e.preventDefault();
+        if (name==null || stack==null || content==null || contribution==null){
+            alert("입력내용은 반드시 입력해주세요.");
+            return false;
+        }
+        axios.post(baseURL+"/project",{
+            name: name,
+            stack: stack,
+            content: content,
+            contribution: contribution
+
+        }).then((res) => {
+            console.log(res);
+
+            setSelectedProject(null);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setIsAddFormVisible(false);
+    };
 
     return (
         <div>
@@ -91,6 +124,7 @@ function UserProject(props) {
                                 </div>
                                 {
                                     props.islogin && isEditing ? (
+                                        isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={project[0]} onChange={
                                                 (e) => {
@@ -121,20 +155,52 @@ function UserProject(props) {
                                                     setContribution(e.target.value)
                                                 }}
                                             /><br/>
-                                            <button onClick={updateUserProject}>Update</button>
+                                            <button type="submit" onClick={updateUserProject}>Update</button>
                                         </form>
+                                        )
                                     ) : (
                                         <div>
-                                            <button onClick={(e) => toggleProjectUpdateForm(project, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => toggleProjectUpdateForm(project, e)}>Update</button>
                                         </div>
                                     )
                                 }
                             </div>
                         )
 
-                    })
+                    })}
+                {
+                    isAddFormVisible && (
+                        <form>
+                            Name:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setName(e.target.value)
+                                }}
+                            /><br/>
+                            Stack:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setStack(e.target.value)
+                                }}
+                            /><br/>
+                            Content:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setContent(e.target.value)
+                                }}
+                            /><br/>
+                            Contribution:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setContribution(e.target.value)
+                                }}
+                            /><br/>
+                            <button type="submit" onClick={addUserProject}>Add</button>
+                        </form>
+                    )
                 }
             </div>
+            <PlusButton onClick={toggleAddForm}/>
         </div>
     )
 }

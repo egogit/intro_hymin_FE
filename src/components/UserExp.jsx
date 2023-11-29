@@ -3,7 +3,7 @@ import React from "react";
 import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
-import TermContainer from "../ui/TermContainer";
+import PlusButton from "./PlusButton";
 
 const styles={
     cvContainer:{
@@ -25,6 +25,8 @@ function UserExp(props){
     const [contentId, setContentId] = useState("");
     const [showExpUpdate, setShowExpUpdate] = useState(false);
     const [selectedExpUpdate, setSelectedExpUpdate]=useState("");
+    const [isFormVisible, setIsFormVisible]=useState(false);
+    const [isAddFormVisible, setIsAddFormVisible]=useState(false);
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -39,20 +41,25 @@ function UserExp(props){
         }).catch((err) =>{
             console.log(err);
         })
-    },[showExpUpdate])
+    },[showExpUpdate, selectedExpUpdate, isAddFormVisible])
 
     const toggleExpUpdateForm = (exp, e) => {
+        e.preventDefault();
         setShowExpUpdate(prevState => !prevState);
-        setId(exp[0])
-        setType(exp[1])
-        setName(exp[2])
-        setLocation(exp[3])
-        setContent(exp[4])
-        setContentId(exp[5])
+        setId(exp[0]);
+        setType(exp[1]);
+        setName(exp[2]);
+        setLocation(exp[3]);
+        setContent(exp[4]);
+        setContentId(exp[5]);
+        setSelectedExpUpdate(exp[0]);
+        setIsFormVisible(true);
+        setIsAddFormVisible(false);
     }
 
-    const updateUserExp = () => {
-        axios.post(baseURL+"/experience/update",{
+    const updateUserExp = (e) => {
+        e.preventDefault();
+        axios.post(baseURL+"/experience",{
             id: id,
             type: type,
             name: name,
@@ -67,7 +74,37 @@ function UserExp(props){
         }).catch((err) =>{
             console.log(err);
         })
+        setIsFormVisible(false);
     }
+
+    const toggleAddForm = (e) => {
+        e.preventDefault();
+        setIsAddFormVisible((prevState) => !prevState);
+        setIsFormVisible(false);
+    };
+
+    const addUserExp = (e) => {
+        e.preventDefault();
+        if (name==null || location==null || content==null){
+            alert("name ,location, content는 반드시 입력해주세요.");
+            return false;
+        }
+        console.log(type, name, location, content)
+        axios.post(baseURL+"/experience",{
+            type: type,
+            name: name,
+            location: location,
+            content: content,
+
+        }).then((res) => {
+            console.log(res);
+
+            setSelectedExpUpdate(null);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setIsAddFormVisible(false);
+    };
 
     return(
         <div>
@@ -82,18 +119,18 @@ function UserExp(props){
                                 <div style={styles.cvContainer}>
                                     <div>
                                         <div><b>{exp[3]} ({exp[2]}, {exp[1]})</b></div>
-                                        {exp[4]}
+                                        <div>{exp[4]}</div>
                                     </div>
                                 </div>
                                 {
                                     props.islogin && isEditing ? (
+                                        isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={exp[0]} onChange={
-                                                (e) =>
-                                                {
+                                                (e) => {
                                                     setId(e.target.value)
                                                 }}
-                                            /><br />
+                                            /><br/>
                                             Position:
                                             <InputContainer type={"text"} value={name} onChange={
                                                 (e) =>
@@ -122,22 +159,56 @@ function UserExp(props){
                                                     setContent(e.target.value)
                                                 }}
                                             /><br />
-                                            <button onClick={updateUserExp}>Update</button>
+                                            <button type="submit" onClick={updateUserExp}>Update</button>
                                         </form>
+                                        )
                                     ) : (
-                                        props.islogin ? (
                                         <div>
-                                            <button onClick={(e) => toggleExpUpdateForm(exp,e)}>Update</button>
+                                            <button type="submit" onClick={(e) => toggleExpUpdateForm(exp,e)}>Update</button>
                                         </div>
-                                        ): <></>
                                     )
                                 }
                             </div>
                         )
 
-                    })
+                    })}
+                {
+                    isAddFormVisible && (
+                        <form>
+                            Position:
+                            <InputContainer type={"text"} onChange={
+                                (e) =>
+                                {
+                                    setName(e.target.value)
+                                }}
+                            /><br />
+                            Location:
+                            <InputContainer type={"text"} onChange={
+                                (e) =>
+                                {
+                                    setLocation(e.target.value)
+                                }}
+                            /><br />
+                            Type:
+                            <InputContainer type={"text"} onChange={
+                                (e) =>
+                                {
+                                    setType(e.target.value)
+                                }}
+                            /><br />
+                            Content:
+                            <InputContainer type={"text"} onChange={
+                                (e) =>
+                                {
+                                    setContent(e.target.value)
+                                }}
+                            /><br />
+                            <button type="submit" onClick={addUserExp}>Add</button>
+                        </form>
+                    )
                 }
             </div>
+            <PlusButton onClick={toggleAddForm}/>
         </div>
     )
 

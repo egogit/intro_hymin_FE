@@ -3,6 +3,7 @@ import React from "react";
 import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
+import PlusButton from "./PlusButton";
 
 const styles={
     cvContainer:{
@@ -16,15 +17,13 @@ const styles={
 function UserCertificate(props) {
 
     const [userCertificate, setUserCertificate] = useState([]);
-
-
-    const [showCertificateUpdate, setShowCertificateUpdate] = useState(false);
-    const [selectedCertificate, setSelectedCertificate] = useState(null);
-
     const [id, setId] = useState("");
     const [name, setName] = useState("");
     const [organization, setOrganization] = useState("");
-
+    const [showCertificateUpdate, setShowCertificateUpdate] = useState(false);
+    const [selectedCertificate, setSelectedCertificate] = useState(null);
+    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isAddFormVisible, setIsAddFormVisible] = useState(false);
 
     const baseURL = "http://localhost:8080/api/user"
 
@@ -39,19 +38,22 @@ function UserCertificate(props) {
         }).catch((err) =>{
             console.log(err);
         })
-    },[showCertificateUpdate])
+    },[showCertificateUpdate, selectedCertificate, isAddFormVisible])
 
     const toggleCertificateUpdateForm = (certificate, e) => {
+        e.preventDefault()
         setShowCertificateUpdate(prevState => !prevState);
         setId(certificate[0]);
         setName(certificate[1]);
         setOrganization(certificate[2]);
-
         setSelectedCertificate(certificate[0]);
+        setIsFormVisible(true);
+        setIsAddFormVisible(false);
     }
 
-    const updateUserCertificate = () => {
-        axios.post(baseURL + "/certificate/update", {
+    const updateUserCertificate = (e) => {
+        e.preventDefault();
+        axios.post(baseURL + "/certificate", {
             id: id,
             name: name,
             organization: organization,
@@ -63,7 +65,35 @@ function UserCertificate(props) {
         }).catch((err) => {
             console.log(err);
         })
+        setIsFormVisible(false);
     }
+
+    const toggleAddForm = (e) => {
+        e.preventDefault();
+        setIsAddFormVisible((prevState) => !prevState);
+        setIsFormVisible(false);
+    };
+
+    const addUserCertificate = (e) => {
+        e.preventDefault();
+        if (name==null || organization==null){
+            alert("name ,organization은 반드시 입력해주세요.");
+            return false;
+        }
+
+        axios.post(baseURL+"/certificate",{
+            name: name,
+            organization: organization
+
+        }).then((res) => {
+            console.log(res);
+
+            setSelectedCertificate(null);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setIsAddFormVisible(false);
+    };
 
     return (
         <div>
@@ -83,6 +113,7 @@ function UserCertificate(props) {
                                 </div>
                                 {
                                     props.islogin && isEditing ? (
+                                        isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={certificate[0]} onChange={
                                                 (e) => {
@@ -101,20 +132,40 @@ function UserCertificate(props) {
                                                     setOrganization(e.target.value)
                                                 }}
                                             /><br/>
-                                            <button onClick={updateUserCertificate}>Update</button>
+                                            <button type="submit" onClick={updateUserCertificate}>Update</button>
                                         </form>
+                                        )
                                     ) : (
                                         <div>
-                                            <button onClick={(e) => toggleCertificateUpdateForm(certificate, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => toggleCertificateUpdateForm(certificate, e)}>Update</button>
                                         </div>
                                     )
                                 }
                             </div>
                         )
 
-                    })
+                    })}
+                {
+                    isAddFormVisible && (
+                        <form>
+                            Name:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setName(e.target.value)
+                                }}
+                            /><br/>
+                            Organization:
+                            <InputContainer type={"text"} onChange={
+                                (e) => {
+                                    setOrganization(e.target.value)
+                                }}
+                            /><br/>
+                            <button type="submit" onClick={addUserCertificate}>Add</button>
+                        </form>
+                    )
                 }
             </div>
+            <PlusButton onClick={toggleAddForm}/>
         </div>
     )
 }
