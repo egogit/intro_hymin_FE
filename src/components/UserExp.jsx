@@ -24,6 +24,7 @@ function UserExp(props){
     const [content, setContent] = useState("");
     const [contentId, setContentId] = useState("");
     const [showExpUpdate, setShowExpUpdate] = useState(false);
+    const [selectedExpUpdate, setSelectedExpUpdate]=useState("");
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -38,7 +39,7 @@ function UserExp(props){
         }).catch((err) =>{
             console.log(err);
         })
-    })
+    },[showExpUpdate])
 
     const toggleExpUpdateForm = (exp, e) => {
         setShowExpUpdate(prevState => !prevState);
@@ -60,7 +61,9 @@ function UserExp(props){
             expContentId: contentId
 
         }).then((res) => {
-            console.log(res)
+            console.log(res);
+
+            setSelectedExpUpdate(null);
         }).catch((err) =>{
             console.log(err);
         })
@@ -72,6 +75,8 @@ function UserExp(props){
             <div style={styles.cvElementContainer}>
                 {
                     userExp.map((exp) => {
+                        const isEditing = selectedExpUpdate === exp[0];
+
                         return(
                             <div key={exp[0]}>
                                 <div style={styles.cvContainer}>
@@ -81,7 +86,7 @@ function UserExp(props){
                                     </div>
                                 </div>
                                 {
-                                    props.islogin && showExpUpdate ? (
+                                    props.islogin && isEditing ? (
                                         <form>
                                             <InputContainer type={"hidden"} value={exp[0]} onChange={
                                                 (e) =>
@@ -120,9 +125,11 @@ function UserExp(props){
                                             <button onClick={updateUserExp}>Update</button>
                                         </form>
                                     ) : (
+                                        props.islogin ? (
                                         <div>
                                             <button onClick={(e) => toggleExpUpdateForm(exp,e)}>Update</button>
                                         </div>
+                                        ): <></>
                                     )
                                 }
                             </div>

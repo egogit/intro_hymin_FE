@@ -23,7 +23,7 @@ function UserEducation(props) {
 
     const [id, setId] = useState("");
     const [major, setMajor] = useState("");
-    const [type, setType] = useState(-1);
+    const [minor, setMinor] = useState(-1);
     const [degree, setDegree] = useState("");
     const [school, setSchool] = useState("");
     const [GPA, setGPA] = useState(0.0);
@@ -36,7 +36,7 @@ function UserEducation(props) {
             setUserEducation([]);
             res.data.map((exp) => {
                 setUserEducation((userEducation) =>
-                    [...userEducation, [exp["id"], exp["major"], exp["type"],
+                    [...userEducation, [exp["id"], exp["major"], exp["minor"],
                         exp["degree"], exp["school"], exp['GPA'], exp['relatedSubject']
                         ]])
             })
@@ -49,7 +49,7 @@ function UserEducation(props) {
         setShowEducationUpdate(prevState => !prevState);
         setId(edu[0]);
         setMajor(edu[1]);
-        setType(1);
+        setMinor(0);
         setDegree(edu[3]);
         setSchool(edu[4]);
         setGPA(edu[5]);
@@ -62,7 +62,7 @@ function UserEducation(props) {
         axios.post(baseURL + "/education/update", {
             id: id,
             major: major,
-            type: 1,
+            minor: 1,
             degree: degree,
             school: school,
             GPA: parseFloat(GPA),
