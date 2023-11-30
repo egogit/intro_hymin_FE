@@ -24,6 +24,7 @@ function UserExtraActivity(props) {
     const [selectedExtraAct, setSelectedExtraAct] = useState(null);
     const [isFormVisible, setIsFormVisible]=useState(false);
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedExtraActId, setDeletedExtraActId] = useState(null);
 
 
     const baseURL = "http://localhost:8080/api/user"
@@ -39,7 +40,7 @@ function UserExtraActivity(props) {
         }).catch((err) =>{
             console.log(err);
         })
-    },[showExtraActUpdate,selectedExtraAct,isAddFormVisible])
+    },[showExtraActUpdate,selectedExtraAct,isAddFormVisible,deletedExtraActId])
 
     const toggleExtraActUpdateForm = (extraAct, e) => {
         e.preventDefault();
@@ -94,6 +95,23 @@ function UserExtraActivity(props) {
         setIsAddFormVisible(false);
     };
 
+    const deleteExtraAct = (extraAct, e) => {
+        e.preventDefault();
+        if (extraAct[0]==null){
+            alert("id가 존재하지않는 extraActivity 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/extracurriculum",
+            { data: { id: extraAct[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedExtraActId(extraAct[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedExtraActId(null);
+    }
+
     return (
         <div>
             <CVTitle title="Extra Activity"/>
@@ -137,6 +155,8 @@ function UserExtraActivity(props) {
                                     ) : (
                                         <div>
                                             <button type="submit" onClick={(e) => toggleExtraActUpdateForm(extraAct, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => deleteExtraAct(extraAct,e)}>Delete</button>
+
                                         </div>
                                     )
                                 }

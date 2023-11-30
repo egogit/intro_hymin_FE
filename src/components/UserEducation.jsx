@@ -27,6 +27,7 @@ function UserEducation(props) {
     const [selectedEducation, setSelectedEducation] = useState(null);
     const [isFormVisible, setIsFormVisible]=useState(false);
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedEduId, setDeletedEduId] = useState(null);
 
 
     const baseURL = "http://localhost:8080/api/user"
@@ -34,16 +35,16 @@ function UserEducation(props) {
     useEffect(() => {
         axios.get(baseURL + "/education").then((res) => {
             setUserEducation([]);
-            res.data.map((exp) => {
+            res.data.map((edu) => {
                 setUserEducation((userEducation) =>
-                    [...userEducation, [exp["id"], exp["major"],
-                        exp["degree"], exp["school"], exp['GPA'], exp['relatedSubject']
+                    [...userEducation, [edu["id"], edu["major"],
+                        edu["degree"], edu["school"], edu['GPA'], edu['relatedSubject']
                         ]])
             })
         }).catch((err) => {
             console.log(err);
         })
-    }, [showEducationUpdate, selectedEducation, isAddFormVisible])
+    }, [showEducationUpdate, selectedEducation, isAddFormVisible,deletedEduId])
 
     const toggleEducationUpdateForm = (edu, e) => {
         e.preventDefault()
@@ -108,6 +109,23 @@ function UserEducation(props) {
         setIsAddFormVisible(false);
     };
 
+    const deleteEdu = (edu, e) => {
+        e.preventDefault();
+        if (edu[0]==null){
+            alert("id가 존재하지않는 education 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/education",
+            { data: { id: edu[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedEduId(edu[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedEduId(null);
+    }
+
     return (
         <div>
             <CVTitle title="Education"/>
@@ -171,6 +189,7 @@ function UserEducation(props) {
                                     ) : (
                                         <div>
                                             <button type="submit" onClick={(e) => toggleEducationUpdateForm(edu, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => {deleteEdu(edu,e)}}>Delete</button>
                                         </div>
                                     )
                                 }

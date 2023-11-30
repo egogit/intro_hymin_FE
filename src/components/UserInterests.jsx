@@ -3,13 +3,31 @@ import axios from "axios";
 import SidebarTitle from "../ui/SidebarTitle";
 import PlusButton from "./PlusButton";
 import InputContainer from "../ui/InputContainer";
+import StarRatings from "react-star-ratings/build/star-ratings";
+import deleteIcon from "../assets/delete.png";
 
+const styles = {
+    deleteButton:{
+        width: '20px',
+        height: '20px',
+        cursor: 'pointer',
+    },
+    interestsContainer:{
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    deleteButtonContainer:{
+        // width: '100%',
+        textAlign: 'right'
+    }
+}
 
 function UserInterests(props){
     const [userInterests, setUserInterests] = useState([]);
     const [editId, setEditId] = useState("");
     const [editInterests, setEditInterests] = useState("");
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedInterestsId, setDeletedInterestsId] = useState(null);
 
 
     const baseURL ="http://localhost:8080/api/user"
@@ -24,14 +42,14 @@ function UserInterests(props){
         }).catch((err) =>{
             console.log(err);
         })
-    },[editId, isAddFormVisible])
+    },[editId, isAddFormVisible, deletedInterestsId])
 
     const onDoubleClick = (id, interests) => {
         setEditId(id);
         setEditInterests(interests);
     }
 
-    const updateUserInterets = () => {
+    const updateUserInterests = () => {
         axios.post(baseURL + "/interests", {
             id: editId,
             name: editInterests
@@ -67,6 +85,22 @@ function UserInterests(props){
         setIsAddFormVisible(false);
     };
 
+    const deleteInterests = (interests) => {
+        if (interests[0]==null){
+            alert("id가 존재하지않는 skill 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/interests",
+            { data: { id: interests[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedInterestsId(interests[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedInterestsId(null);
+    }
+
     return(
         <div>
             <SidebarTitle title="Interests"/>
@@ -78,10 +112,15 @@ function UserInterests(props){
                                 type="text"
                                 value={editInterests}
                                 onChange={(e) => setEditInterests(e.target.value)}
-                                onBlur={updateUserInterets}
+                                onBlur={updateUserInterests}
                             />
                         ) : (
-                            <span>{interests[1]}</span>
+                            <div style={styles.interestsContainer}>
+                                <div>{interests[1]}</div>
+                                <div style={styles.deleteButtonContainer}>
+                                    <img style={styles.deleteButton} onClick={(e) => deleteInterests(interests,e)} src={deleteIcon} alt="delete"/>
+                                </div>
+                            </div>
                         )}
                     </div>
                 ))}

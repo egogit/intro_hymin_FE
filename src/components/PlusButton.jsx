@@ -9,6 +9,7 @@ const Container = styled.div`
 const StyledImg = styled.img`
     width: 30px;
     height: 30px;
+    cursor:pointer;
 `
 
 function PlusButton(props){

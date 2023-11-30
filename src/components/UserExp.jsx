@@ -27,6 +27,8 @@ function UserExp(props){
     const [selectedExpUpdate, setSelectedExpUpdate]=useState("");
     const [isFormVisible, setIsFormVisible]=useState(false);
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedExpId, setDeletedExpId] = useState(null);
+
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -41,7 +43,7 @@ function UserExp(props){
         }).catch((err) =>{
             console.log(err);
         })
-    },[showExpUpdate, selectedExpUpdate, isAddFormVisible])
+    },[showExpUpdate, selectedExpUpdate, isAddFormVisible, deletedExpId])
 
     const toggleExpUpdateForm = (exp, e) => {
         e.preventDefault();
@@ -106,6 +108,23 @@ function UserExp(props){
         setIsAddFormVisible(false);
     };
 
+    const deleteExp = (exp, e) => {
+        e.preventDefault();
+        if (exp[0]==null){
+            alert("id가 존재하지않는 experience 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/experience",
+            { data: { id: exp[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedExpId(exp[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedExpId(null);
+    }
+
     return(
         <div>
             <CVTitle title="Experience"/>
@@ -165,6 +184,7 @@ function UserExp(props){
                                     ) : (
                                         <div>
                                             <button type="submit" onClick={(e) => toggleExpUpdateForm(exp,e)}>Update</button>
+                                            <button type="submit" onClick={(e) => {deleteExp(exp,e)}}>Delete</button>
                                         </div>
                                     )
                                 }

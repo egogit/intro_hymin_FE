@@ -26,6 +26,7 @@ function UserProject(props) {
     const [selectedProject, setSelectedProject] = useState(null);
     const [isFormVisible, setIsFormVisible]=useState(false);
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedProjectId, setDeletedProjectId] = useState(null);
 
 
     const baseURL = "http://localhost:8080/api/user"
@@ -42,7 +43,7 @@ function UserProject(props) {
         }).catch((err) =>{
             console.log(err);
         })
-    },[showProjectUpdate,selectedProject,isAddFormVisible])
+    },[showProjectUpdate,selectedProject,isAddFormVisible,deletedProjectId])
 
     const toggleProjectUpdateForm = (project, e) => {
         e.preventDefault();
@@ -104,6 +105,23 @@ function UserProject(props) {
         setIsAddFormVisible(false);
     };
 
+    const deleteProject = (project, e) => {
+        e.preventDefault();
+        if (project[0]==null){
+            alert("id가 존재하지않는 certificate 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/project",
+            { data: { id: project[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedProjectId(project[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedProjectId(null);
+    }
+
     return (
         <div>
             <CVTitle title="Projects"/>
@@ -161,6 +179,7 @@ function UserProject(props) {
                                     ) : (
                                         <div>
                                             <button type="submit" onClick={(e) => toggleProjectUpdateForm(project, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => deleteProject(project,e)}>Delete</button>
                                         </div>
                                     )
                                 }

@@ -4,6 +4,7 @@ import SidebarTitle from "../ui/SidebarTitle";
 import StarRatings from "react-star-ratings/build/star-ratings";
 import PlusButton from "./PlusButton";
 import InputContainer from "../ui/InputContainer";
+import deleteIcon from "../assets/delete.png";
 
 
 const styles = {
@@ -12,7 +13,13 @@ const styles = {
     },
     skillRating:{
         textAlign: 'right',
-        width: '100%'
+        width: '100%',
+        paddingRight: '30px'
+    },
+    deleteButton:{
+        width: '20px',
+        height: '20px',
+        cursor: 'pointer',
     },
 }
 
@@ -23,6 +30,7 @@ function UserSkill(props){
     const [editSkill, setEditSkill] = useState("");
     const [editDegree, setEditDegree] = useState(0);
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
+    const [deletedSkillId, setDeletedSkillId] = useState(null);
 
 
     const baseURL ="http://localhost:8080/api/user"
@@ -36,7 +44,7 @@ function UserSkill(props){
         }).catch((err) =>{
             console.log(err);
         })
-    },[editId, isAddFormVisible])
+    },[editId, isAddFormVisible, deletedSkillId])
 
     const onDoubleClick = (id, skill, degree) => {
         setEditId(id);
@@ -83,6 +91,22 @@ function UserSkill(props){
         setIsAddFormVisible(false);
     };
 
+    const deleteSkill = (skill) => {
+        if (skill[0]==null){
+            alert("id가 존재하지않는 skill 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/skill",
+            { data: { id: skill[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedSkillId(skill[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedSkillId(null);
+    }
+
     return(
         <div>
             <SidebarTitle title="Skills"/>
@@ -108,10 +132,13 @@ function UserSkill(props){
                             <div style={styles.skillContainer}>
                                 <div>{skill[1]}</div>
                                 <div style={styles.skillRating}>
-                                <StarRatings rating={skill[2]} starRatedColor="#003b6c"
-                                         starSpacing='3px' starDimension="15px"/>
+                                    <StarRatings rating={skill[2]} starRatedColor="#003b6c"
+                                             starSpacing='3px' starDimension="15px"/>
+                                </div>
+                                <div>
+                                    <img style={styles.deleteButton} onClick={(e) => deleteSkill(skill,e)} src={deleteIcon} alt="delete"/>
+                                </div>
                             </div>
-                    </div>
                         )}
                     </div>
                 ))}

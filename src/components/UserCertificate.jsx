@@ -24,21 +24,23 @@ function UserCertificate(props) {
     const [selectedCertificate, setSelectedCertificate] = useState(null);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [isAddFormVisible, setIsAddFormVisible] = useState(false);
+    const [deletedCrtId, setDeletedCrtId] = useState(null);
+
 
     const baseURL = "http://localhost:8080/api/user"
 
     useEffect(() => {
         axios.get(baseURL+"/certificate").then((res) => {
             setUserCertificate([]);
-            res.data.map((exp)=>{
+            res.data.map((crt)=>{
                 setUserCertificate( (userCertificate) =>
-                    [...userCertificate, [exp["id"], exp["name"], exp["organization"]]]
+                    [...userCertificate, [crt["id"], crt["name"], crt["organization"]]]
                 )
             })
         }).catch((err) =>{
             console.log(err);
         })
-    },[showCertificateUpdate, selectedCertificate, isAddFormVisible])
+    },[showCertificateUpdate, selectedCertificate, isAddFormVisible, deletedCrtId])
 
     const toggleCertificateUpdateForm = (certificate, e) => {
         e.preventDefault()
@@ -95,6 +97,23 @@ function UserCertificate(props) {
         setIsAddFormVisible(false);
     };
 
+    const deleteCrt = (crt, e) => {
+        e.preventDefault();
+        if (crt[0]==null){
+            alert("id가 존재하지않는 certificate 입니다.");
+            return false;
+        }
+        axios.delete(baseURL+"/certificate",
+            { data: { id: crt[0] } }
+        ).then((res) => {
+            console.log(res);
+            setDeletedCrtId(crt[0]);
+        }).catch((err) =>{
+            console.log(err);
+        })
+        setDeletedCrtId(null);
+    }
+
     return (
         <div>
             <CVTitle title="Certificate"/>
@@ -138,6 +157,7 @@ function UserCertificate(props) {
                                     ) : (
                                         <div>
                                             <button type="submit" onClick={(e) => toggleCertificateUpdateForm(certificate, e)}>Update</button>
+                                            <button type="submit" onClick={(e) => {deleteCrt(certificate,e)}}>Delete</button>
                                         </div>
                                     )
                                 }

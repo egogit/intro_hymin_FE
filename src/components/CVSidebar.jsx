@@ -9,7 +9,7 @@ import UserSkill from "./UserSkill";
 const styles = {
     sidebarContainer:{
         width: 250,
-        paddingRight: 50,
+        paddingRight: 70,
     },
 }
 
