@@ -5,6 +5,7 @@ import StarRatings from "react-star-ratings/build/star-ratings";
 import PlusButton from "./PlusButton";
 import InputContainer from "../ui/InputContainer";
 import deleteIcon from "../assets/delete.png";
+import {useAuth} from "./AuthContext";
 
 
 const styles = {
@@ -32,6 +33,7 @@ function UserSkill(props){
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
     const [deletedSkillId, setDeletedSkillId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -47,9 +49,13 @@ function UserSkill(props){
     },[editId, isAddFormVisible, deletedSkillId])
 
     const onDoubleClick = (id, skill, degree) => {
-        setEditId(id);
-        setEditSkill(skill);
-        setEditDegree(degree);
+        if (isAuthenticated){
+            setEditId(id);
+            setEditSkill(skill);
+            setEditDegree(degree);
+        }else{
+            return false;
+        }
     }
 
     const updateUserSkill = () => {
@@ -114,6 +120,7 @@ function UserSkill(props){
                 {userSkill.map((skill) => (
                     <div key={skill[0]} onDoubleClick={() => onDoubleClick(skill[0], skill[1], skill[2])}>
                         {editId === skill[0] ? (
+                            isAuthenticated &&(
                             <div>
                                 <input
                                     type="text"
@@ -128,6 +135,7 @@ function UserSkill(props){
                                     onBlur={updateUserSkill}
                                 />
                             </div>
+                            )
                         ) : (
                             <div style={styles.skillContainer}>
                                 <div>{skill[1]}</div>
@@ -135,9 +143,11 @@ function UserSkill(props){
                                     <StarRatings rating={skill[2]} starRatedColor="#003b6c"
                                              starSpacing='3px' starDimension="15px"/>
                                 </div>
+                                {isAuthenticated&&(
                                 <div>
                                     <img style={styles.deleteButton} onClick={(e) => deleteSkill(skill,e)} src={deleteIcon} alt="delete"/>
                                 </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -162,7 +172,7 @@ function UserSkill(props){
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated&&<PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 }

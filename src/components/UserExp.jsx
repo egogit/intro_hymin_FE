@@ -4,6 +4,7 @@ import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
 import PlusButton from "./PlusButton";
+import {useAuth} from "./AuthContext";
 
 const styles={
     cvContainer:{
@@ -29,6 +30,7 @@ function UserExp(props){
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
     const [deletedExpId, setDeletedExpId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -142,7 +144,7 @@ function UserExp(props){
                                     </div>
                                 </div>
                                 {
-                                    props.islogin && isEditing ? (
+                                    isAuthenticated && isEditing ? (
                                         isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={exp[0]} onChange={
@@ -182,10 +184,12 @@ function UserExp(props){
                                         </form>
                                         )
                                     ) : (
+                                        isAuthenticated&&(
                                         <div>
                                             <button type="submit" onClick={(e) => toggleExpUpdateForm(exp,e)}>Update</button>
                                             <button type="submit" onClick={(e) => {deleteExp(exp,e)}}>Delete</button>
                                         </div>
+                                        )
                                     )
                                 }
                             </div>
@@ -228,7 +232,7 @@ function UserExp(props){
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated&&<PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 

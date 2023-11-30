@@ -3,8 +3,8 @@ import axios from "axios";
 import SidebarTitle from "../ui/SidebarTitle";
 import PlusButton from "./PlusButton";
 import InputContainer from "../ui/InputContainer";
-import StarRatings from "react-star-ratings/build/star-ratings";
 import deleteIcon from "../assets/delete.png";
+import {useAuth} from "./AuthContext";
 
 const styles = {
     deleteButton:{
@@ -29,6 +29,7 @@ function UserInterests(props){
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
     const [deletedInterestsId, setDeletedInterestsId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL ="http://localhost:8080/api/user"
 
@@ -45,8 +46,12 @@ function UserInterests(props){
     },[editId, isAddFormVisible, deletedInterestsId])
 
     const onDoubleClick = (id, interests) => {
-        setEditId(id);
-        setEditInterests(interests);
+        if(isAuthenticated) {
+            setEditId(id);
+            setEditInterests(interests);
+        }else{
+            return false;
+        }
     }
 
     const updateUserInterests = () => {
@@ -108,24 +113,28 @@ function UserInterests(props){
                 {userInterests.map((interests) => (
                     <div key={interests[0]} onDoubleClick={() => onDoubleClick(interests[0], interests[1])}>
                         {editId === interests[0] ? (
-                            <input
-                                type="text"
-                                value={editInterests}
-                                onChange={(e) => setEditInterests(e.target.value)}
-                                onBlur={updateUserInterests}
-                            />
+                                isAuthenticated&&(
+                                    <input
+                                        type="text"
+                                        value={editInterests}
+                                        onChange={(e) => setEditInterests(e.target.value)}
+                                        onBlur={updateUserInterests}
+                                    />
+                                )
                         ) : (
                             <div style={styles.interestsContainer}>
                                 <div>{interests[1]}</div>
+                                {isAuthenticated&&(
                                 <div style={styles.deleteButtonContainer}>
                                     <img style={styles.deleteButton} onClick={(e) => deleteInterests(interests,e)} src={deleteIcon} alt="delete"/>
                                 </div>
+                                )}
                             </div>
                         )}
                     </div>
                 ))}
                 {
-                    isAddFormVisible && (
+                    isAuthenticated&& isAddFormVisible && (
                         <form>
                             Name:
                             <InputContainer type={"text"} onChange={
@@ -138,7 +147,7 @@ function UserInterests(props){
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated&&<PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 }

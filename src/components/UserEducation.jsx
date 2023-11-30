@@ -4,6 +4,7 @@ import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
 import PlusButton from "./PlusButton";
+import {useAuth} from "./AuthContext";
 
 const styles={
     cvContainer:{
@@ -29,6 +30,7 @@ function UserEducation(props) {
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
     const [deletedEduId, setDeletedEduId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL = "http://localhost:8080/api/user"
 
@@ -145,7 +147,7 @@ function UserEducation(props) {
                                     </div>
                                 </div>
                                 {
-                                    props.islogin && isEditing ? (
+                                    isAuthenticated && isEditing ? (
                                         isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={major[0]} onChange={
@@ -187,10 +189,12 @@ function UserEducation(props) {
                                         </form>
                                         )
                                     ) : (
+                                        isAuthenticated &&(
                                         <div>
                                             <button type="submit" onClick={(e) => toggleEducationUpdateForm(edu, e)}>Update</button>
                                             <button type="submit" onClick={(e) => {deleteEdu(edu,e)}}>Delete</button>
                                         </div>
+                                        )
                                     )
                                 }
                             </div>
@@ -235,7 +239,7 @@ function UserEducation(props) {
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated&& <PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 }

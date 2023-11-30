@@ -4,6 +4,7 @@ import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
 import PlusButton from "./PlusButton";
+import {useAuth} from "./AuthContext";
 
 const styles={
     cvContainer:{
@@ -26,6 +27,7 @@ function UserCertificate(props) {
     const [isAddFormVisible, setIsAddFormVisible] = useState(false);
     const [deletedCrtId, setDeletedCrtId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL = "http://localhost:8080/api/user"
 
@@ -131,7 +133,7 @@ function UserCertificate(props) {
                                     </div>
                                 </div>
                                 {
-                                    props.islogin && isEditing ? (
+                                    isAuthenticated && isEditing ? (
                                         isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={certificate[0]} onChange={
@@ -155,10 +157,12 @@ function UserCertificate(props) {
                                         </form>
                                         )
                                     ) : (
+                                        isAuthenticated &&(
                                         <div>
                                             <button type="submit" onClick={(e) => toggleCertificateUpdateForm(certificate, e)}>Update</button>
                                             <button type="submit" onClick={(e) => {deleteCrt(certificate,e)}}>Delete</button>
                                         </div>
+                                        )
                                     )
                                 }
                             </div>
@@ -185,7 +189,7 @@ function UserCertificate(props) {
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated &&<PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 }

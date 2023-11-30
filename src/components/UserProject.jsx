@@ -4,6 +4,7 @@ import {useState, useEffect} from "react";
 import InputContainer from "../ui/InputContainer";
 import CVTitle from "../ui/CVTitle";
 import PlusButton from "./PlusButton";
+import {useAuth} from "./AuthContext";
 
 const styles={
     cvContainer:{
@@ -28,6 +29,7 @@ function UserProject(props) {
     const [isAddFormVisible, setIsAddFormVisible]=useState(false);
     const [deletedProjectId, setDeletedProjectId] = useState(null);
 
+    const {isAuthenticated} = useAuth();
 
     const baseURL = "http://localhost:8080/api/user"
 
@@ -141,7 +143,7 @@ function UserProject(props) {
                                     </div>
                                 </div>
                                 {
-                                    props.islogin && isEditing ? (
+                                    isAuthenticated && isEditing ? (
                                         isFormVisible &&(
                                         <form>
                                             <InputContainer type={"hidden"} value={project[0]} onChange={
@@ -177,10 +179,12 @@ function UserProject(props) {
                                         </form>
                                         )
                                     ) : (
+                                        isAuthenticated &&(
                                         <div>
                                             <button type="submit" onClick={(e) => toggleProjectUpdateForm(project, e)}>Update</button>
                                             <button type="submit" onClick={(e) => deleteProject(project,e)}>Delete</button>
                                         </div>
+                                        )
                                     )
                                 }
                             </div>
@@ -219,7 +223,7 @@ function UserProject(props) {
                     )
                 }
             </div>
-            <PlusButton onClick={toggleAddForm}/>
+            {isAuthenticated &&<PlusButton onClick={toggleAddForm}/>}
         </div>
     )
 }

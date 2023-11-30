@@ -1,7 +1,3 @@
-import axios from 'axios';
-import StarRatings from "react-star-ratings/build/star-ratings";
-
-import {useState, useEffect} from "react";
 import UserContact from "./UserContact";
 import UserInterests from "./UserInterests";
 import UserSkill from "./UserSkill";

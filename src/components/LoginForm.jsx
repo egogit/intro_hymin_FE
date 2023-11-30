@@ -1,7 +1,7 @@
-import axios from "axios";
-import React from "react";
+import React, {useEffect} from "react";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "./AuthContext";
 
 const styles={
     loginElement: {
@@ -27,38 +27,28 @@ const styles={
 }
 
 function LoginForm(props){
-    const baseURL ="http://localhost:8080/api/auth";
-    const navigate = useNavigate();
-
     const [id, setId]= useState('');
     const [pw, setPw] = useState('');
-    const onIdChange = e => setId(e.target.value);
-    const onPwChange = e => setPw(e.target.value);
+    const {isAuthenticated, login, logout} = useAuth();
+    const navigate = useNavigate();
 
-    const checkLogin = (e) => {
+    useEffect(() => {
+        isAuthenticated && navigate('/')
+    }, [isAuthenticated]);
+
+    const loginHandler = (e) => {
         e.preventDefault();
-        axios.post(baseURL+'/login',{
-            id: id,
-            pw: pw
-        }).then((res) => {
-            console.log(res)
-            if(res.data.msg === 'success'){
-                navigate('/');
-            }else{
-                setId('');
-                setPw('');
-            }
-        }).catch((err) => {
-            console.log(err);
-            alert("오류가 발생하였습니다.")
-        })
+        if(!login(id,pw)){
+            setId("");
+            setPw("");
+        }
     }
 
     return (
         <form>
-            <input value={id} type="text" placeholder="아이디" style={styles.loginElement} onChange={onIdChange} />
-            <input value={pw} type="password" placeholder="비밀번호" style={styles.loginElement} onChange={onPwChange} /><br/>
-            <input type="submit" id="btn" value="로그인" style={styles.loginButton} onClick={checkLogin} />
+            <input value={id} type="text" placeholder="아이디" style={styles.loginElement} onChange={e => setId(e.target.value)} />
+            <input value={pw} type="password" placeholder="비밀번호" style={styles.loginElement} onChange={e => setPw(e.target.value)} /><br/>
+            <input type="submit" id="btn" value="로그인" style={styles.loginButton} onClick={loginHandler} />
             <p>id: admin, pw: 1234</p>
         </form>
     )
