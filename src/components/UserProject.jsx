@@ -31,7 +31,7 @@ function UserProject(props) {
 
     const {isAuthenticated} = useAuth();
 
-    const baseURL = "http://localhost:8080/api/user"
+    const baseURL = "http://introhymin.com/api/user" // local: "http://localhost:8080/api/user"
 
     useEffect(() => {
         axios.get(baseURL+"/project").then((res) => {

@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const baseURL ="http://localhost:8080/api/auth";
+    const baseURL ="http://introhymin.com/api/auth"; // local: "http://localhost:8080/api/auth";
 
     useEffect(() => {
         axios.get(baseURL+'/checkSession')

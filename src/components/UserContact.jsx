@@ -10,7 +10,7 @@ import ContactElement from "./ContactElement";
 function UserContact(props){
     const [userInfo, setUserInfo] = useState([]);
 
-    const baseURL ="http://localhost:8080/api/user"
+    const baseURL ="http://introhymin.com/api/user"  //local: "http://localhost:8080/api/user"
 
     useEffect(() => {
         axios.get(baseURL+"/info").then((res) => {
